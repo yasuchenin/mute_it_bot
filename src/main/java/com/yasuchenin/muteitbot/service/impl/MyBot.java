@@ -2,14 +2,12 @@ package com.yasuchenin.muteitbot.service.impl;
 
 import com.yasuchenin.muteitbot.command.BotCommand;
 import com.yasuchenin.muteitbot.configuration.BotConfigurationProperties;
+import com.yasuchenin.muteitbot.service.CommandHandler;
 import com.yasuchenin.muteitbot.service.MessageServiceApi;
 import com.yasuchenin.muteitbot.service.PollServiceApi;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -20,23 +18,9 @@ public class MyBot extends TelegramLongPollingBot {
 
     private final PollServiceApi pollServiceApi;
     private final MessageServiceApi messageServiceApi;
-
-    private Map<String, BotCommand> botCommandMap;
+    private final CommandHandler commandHandler;
 
     private final BotConfigurationProperties config;
-
-    @Autowired
-    public void initCommandMap(List<BotCommand> botCommands) {
-        botCommandMap = new ConcurrentHashMap<>();
-        botCommands.forEach(botCommand -> {
-            if (botCommandMap.containsKey(botCommand.getCommandName())) {
-                throw new IllegalStateException(
-                    "Duplicate command name - %s".formatted(botCommand.getCommandName())
-                );
-            }
-            botCommandMap.put(botCommand.getCommandName(), botCommand);
-        });
-    }
 
     @Override
     public String getBotUsername() {
@@ -56,21 +40,18 @@ public class MyBot extends TelegramLongPollingBot {
         ) {
             final List<String> messageCommands = getCommandList(update.getMessage().getText());
             if (messageCommands.size() <= 1) {
-                final List<String> commandNames = botCommandMap.values().stream().map(
-                    BotCommand::getCommandName
-                ).toList();
-                messageServiceApi.showCommandList(commandNames, update.getMessage().getChatId());
+                messageServiceApi.showCommandList(commandHandler.getCommandsName(), update.getMessage().getChatId());
                 return;
             }
             final String commandName = messageCommands.get(1);
-            final BotCommand botCommand = botCommandMap.get(commandName);
+            final BotCommand botCommand = commandHandler.getCommandByName(commandName);
             if (botCommand != null) {
                 botCommand.execute(update, messageCommands);
                 return;
             }
         }
 
-        if (update.hasPoll()) {
+        if (update.hasPoll() && !update.getPoll().getIsClosed()) {
             pollServiceApi.checkMutePollResults(update.getPoll());
         }
     }

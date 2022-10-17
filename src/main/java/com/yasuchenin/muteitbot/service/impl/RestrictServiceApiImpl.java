@@ -18,24 +18,20 @@ public class RestrictServiceApiImpl implements RestrictServiceApi {
     private final MyBot myBot;
 
     @Override
-    public void muteUser(Long userId, long chatId, Integer days) {
-        try {
-            final long muteUntilEpochSecond = ZonedDateTime.now().plus(days, ChronoUnit.DAYS)
-                .toEpochSecond();
-            final RestrictChatMember restrictChatMember = RestrictChatMember.builder()
-                .chatId(chatId)
-                .userId(userId)
-                .untilDate((int) muteUntilEpochSecond)
-                .permissions(
-                    ChatPermissions.builder()
-                        .canSendMessages(false)
-                        .build()
-                )
-                .build();
-            myBot.execute(restrictChatMember);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
+    public void muteUser(Long userId, long chatId, Integer days) throws TelegramApiException {
+        final long muteUntilEpochSecond = ZonedDateTime.now().plus(days, ChronoUnit.DAYS)
+            .toEpochSecond();
+        final RestrictChatMember restrictChatMember = RestrictChatMember.builder()
+            .chatId(chatId)
+            .userId(userId)
+            .untilDate((int) muteUntilEpochSecond)
+            .permissions(
+                ChatPermissions.builder()
+                    .canSendMessages(false)
+                    .build()
+            )
+            .build();
+        myBot.execute(restrictChatMember);
     }
 
 }

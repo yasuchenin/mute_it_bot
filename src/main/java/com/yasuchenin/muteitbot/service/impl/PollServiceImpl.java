@@ -2,8 +2,8 @@ package com.yasuchenin.muteitbot.service.impl;
 
 import com.yasuchenin.muteitbot.configuration.BotConfigurationProperties;
 import com.yasuchenin.muteitbot.dto.PollMuteDto;
-import com.yasuchenin.muteitbot.service.PollServiceApi;
 import com.yasuchenin.muteitbot.service.MessageServiceApi;
+import com.yasuchenin.muteitbot.service.PollServiceApi;
 import com.yasuchenin.muteitbot.service.RestrictServiceApi;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -64,7 +64,7 @@ public class PollServiceImpl implements PollServiceApi {
         try {
             final SendPoll poll = SendPoll.builder()
                 .chatId(chatId)
-                .question("Замьютить %s на %s суток?".formatted(userName, days))
+                .question("Замьютить %s на %s %s?".formatted(userName, days, convertDaysWord(days)))
                 .option(YES_OPTION)
                 .option(NO_OPTION)
                 .isAnonymous(false)
@@ -78,7 +78,9 @@ public class PollServiceImpl implements PollServiceApi {
                     .userId(userId)
                     .userName(userName)
                     .daysMute(days)
-                    .untilActive(ZonedDateTime.now().plus(config.getVoteTillHours(), ChronoUnit.HOURS))
+                    .untilActive(
+                        ZonedDateTime.now().plus(config.getVoteTillHours(), ChronoUnit.HOURS)
+                    )
                     .build()
             );
         } catch (TelegramApiException e) {
@@ -99,15 +101,23 @@ public class PollServiceImpl implements PollServiceApi {
             .findAny();
         if (winnerResult.isPresent()) {
             if (winnerResult.get().getText().equals(YES_OPTION)) {
+                final Integer pollMessageId = pollDto.getPollMessageId();
+                stopPoll(pollMessageId, chatId);
+                try {
+                    restrictServiceApi.muteUser(pollDto.getUserId(), chatId, pollDto.getDaysMute());
+                } catch (TelegramApiException e) {
+                    messageServiceApi.sendMsg("Я не смог - его сила больше моей((", chatId);
+                    e.printStackTrace();
+                    return;
+                }
                 messageServiceApi.sendMsg(
-                    "Пользователь %s улетел в мьют на %s суток".formatted(
-                        pollDto.getUserName(), pollDto.getDaysMute()
+                    "Пользователь %s улетел в мьют на %s %s".formatted(
+                        pollDto.getUserName(),
+                        pollDto.getDaysMute(),
+                        convertDaysWord(pollDto.getDaysMute())
                     ),
                     chatId
                 );
-                final Integer pollMessageId = pollDto.getPollMessageId();
-                stopPoll(pollMessageId, chatId);
-                restrictServiceApi.muteUser(pollDto.getUserId(), chatId, pollDto.getDaysMute());
             } else if (winnerResult.get().getText().equals(NO_OPTION)) {
                 messageServiceApi.sendMsg(
                     "Пользователь %s увернулся от мьюта".formatted(
@@ -120,6 +130,10 @@ public class PollServiceImpl implements PollServiceApi {
             }
             pollMap.remove(pollId);
         }
+    }
+
+    private String convertDaysWord(int count) {
+        return count == 1 ? "сутки" : "суток";
     }
 
 }

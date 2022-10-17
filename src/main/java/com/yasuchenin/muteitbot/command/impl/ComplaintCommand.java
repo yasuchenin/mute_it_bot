@@ -9,17 +9,26 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Service
 @RequiredArgsConstructor
-public class HelpCommand implements BotCommand {
+public class ComplaintCommand implements BotCommand {
 
     private final MessageServiceApi messageServiceApi;
 
     @Override
     public void execute(Update update, List<String> messageCommands) {
-        messageServiceApi.showHelp(update.getMessage().getChatId());
+        if (messageCommands.size() < 3) {
+            messageServiceApi.sendMsg(getHelpMessage(), update.getMessage().getChatId());
+            return;
+        }
+        messageServiceApi.sendMsg("Ваша жалоба принята, спасибо за обращение!", update.getMessage().getChatId());
     }
 
     @Override
     public String getCommandName() {
-        return "help";
+        return "complaint";
+    }
+
+    @Override
+    public String getHelpMessage() {
+        return "Формат команды: @mute_it_bot complaint <жалоба к админу>";
     }
 }

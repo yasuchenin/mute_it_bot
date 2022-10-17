@@ -29,17 +29,11 @@ public class MessagesServiceApiImpl implements MessageServiceApi {
         }
     }
 
-
-    @Override
-    public void showHelp(long chatId) {
-        sendMsg("Mute bot ver 0.0.1", chatId);
-    }
-
     @Override
     public void showCommandList(List<String> commandNames, long chatId) {
         final Optional<String> reduce = commandNames.stream()
-            .reduce((x, y) -> x.concat(" ").concat(y));
-        sendMsg("Available commands: " + reduce.orElse("none"), chatId);
+            .reduce((x, y) -> x.concat(", ").concat(y));
+        sendMsg("Доступные команды: " + reduce.orElse("none"), chatId);
     }
 
 }

@@ -9,4 +9,6 @@ public interface BotCommand {
 
     String getCommandName();
 
+    String getHelpMessage();
+
 }
