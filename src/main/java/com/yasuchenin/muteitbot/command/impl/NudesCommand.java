@@ -6,6 +6,7 @@ import com.yasuchenin.muteitbot.dto.UnsplashResponse;
 import com.yasuchenin.muteitbot.service.MessageServiceApi;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -15,6 +16,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class NudesCommand implements BotCommand {
 
+    @Qualifier("unsplashWebClient")
     private final WebClient webClient;
     private final MessageServiceApi messageServiceApi;
     private final BotConfigurationProperties config;

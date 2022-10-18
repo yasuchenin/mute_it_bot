@@ -22,11 +22,27 @@ public class BotApiConfiguration {
     }
 
     @Bean
-    public WebClient getWebClient(HttpClient httpClient, BotConfigurationProperties config) {
+    public WebClient unsplashWebClient(HttpClient httpClient, BotConfigurationProperties config) {
         return WebClient.builder()
             .baseUrl("https://api.unsplash.com")
             .clientConnector(new ReactorClientHttpConnector(httpClient))
             .defaultHeader("Authorization", "Bearer Client-ID %s".formatted(config.getUnsplashToken()))
+            .build();
+    }
+
+    @Bean
+    public WebClient rzhunemoguWebClient(HttpClient httpClient, BotConfigurationProperties config) {
+        return WebClient.builder()
+            .baseUrl("http://rzhunemogu.ru")
+            .defaultHeader("Accept-Encoding", "windows-1251")
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .build();
+    }
+
+    @Bean
+    public WebClient catWebClient(HttpClient httpClient) {
+        return WebClient.builder()
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
             .build();
     }
 
