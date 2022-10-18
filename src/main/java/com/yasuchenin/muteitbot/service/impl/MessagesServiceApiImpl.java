@@ -19,11 +19,11 @@ public class MessagesServiceApiImpl implements MessageServiceApi {
     @Override
     public void sendMsg(String messageText, long chatId) {
         try {
-            final SendMessage qwe = SendMessage.builder()
+            final SendMessage msg = SendMessage.builder()
                 .chatId(chatId)
                 .text(messageText)
                 .build();
-            myBot.execute(qwe);
+            myBot.execute(msg);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }

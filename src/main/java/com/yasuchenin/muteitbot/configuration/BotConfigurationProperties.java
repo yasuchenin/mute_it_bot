@@ -9,11 +9,17 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("app.bot")
 public class BotConfigurationProperties {
 
-    private String token;
+    private String telegramToken;
+
+    private String unsplashToken;
 
     private String botUserName;
 
     private Integer voteWinnerCount;
 
     private Long voteTillHours;
+
+    private String unsplashQuery;
+
+    private String adminName;
 }

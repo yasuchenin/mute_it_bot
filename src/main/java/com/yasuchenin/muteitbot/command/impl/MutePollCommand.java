@@ -23,7 +23,6 @@ public class MutePollCommand implements BotCommand {
     @Override
     public void execute(Update update, List<String> messageCommands) {
         long chatId = update.getMessage().getChatId();
-
         if (!update.getMessage().isReply() || messageCommands.size() <= 2 || !isNumeric(messageCommands.get(2))) {
             messageServiceApi.sendMsg(getHelpMessage(), chatId);
             return;
@@ -32,6 +31,10 @@ public class MutePollCommand implements BotCommand {
         final String muteUserName = update.getMessage().getReplyToMessage().getFrom().getUserName();
         if (config.getBotUserName().contains(muteUserName)) {
             messageServiceApi.sendMsg("Анус себе забань", chatId);
+            return;
+        }
+        if (config.getAdminName().contains(muteUserName)) {
+            messageServiceApi.sendMsg("Его сила больше моей(", chatId);
             return;
         }
 
