@@ -96,9 +96,18 @@ public class PollServiceImpl implements PollServiceApi {
             return;
         }
         long chatId = pollDto.getChatId();
+        final Integer totalVoters = poll.getTotalVoterCount();
+
+        if (totalVoters < config.getMinVoteCount() ) {
+            return;
+        }
+
         final Optional<PollOption> winnerResult = poll.getOptions().stream()
-            .filter(pollOption -> pollOption.getVoterCount() >= config.getVoteWinnerCount())
-            .findAny();
+            .filter(pollOption -> {
+                    final double i = (double)pollOption.getVoterCount() / (double)totalVoters;
+                    return i >= 0.85;
+            }).findAny();
+
         if (winnerResult.isPresent()) {
             if (winnerResult.get().getText().equals(YES_OPTION)) {
                 final Integer pollMessageId = pollDto.getPollMessageId();

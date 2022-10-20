@@ -15,7 +15,7 @@ public class BotConfigurationProperties {
 
     private String botUserName;
 
-    private Integer voteWinnerCount;
+    private Integer minVoteCount;
 
     private Long voteTillHours;
 
