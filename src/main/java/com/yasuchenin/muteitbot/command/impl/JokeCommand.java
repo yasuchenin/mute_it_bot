@@ -17,7 +17,7 @@ public class JokeCommand implements BotCommand {
 
     @Override
     public void execute(Update update, List<String> messageCommands) {
-        messageServiceApi.sendMsg("%s дай анекдот".formatted(config.getAdminName()), update.getMessage().getChatId());
+        messageServiceApi.sendMsg("@%s дай анекдот".formatted(config.getAdminName()), update.getMessage().getChatId());
     }
 
     @Override

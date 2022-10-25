@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15.0
+    environment:
+      POSTGRES_DB: mute
+      POSTGRES_USER: mute_bot
+      POSTGRES_PASSWORD: mute_bot
+    ports:
+      - "54325:5432"
+    command: ["postgres", "-c", "log_statement=all", "-c", "wal_level=logical"]

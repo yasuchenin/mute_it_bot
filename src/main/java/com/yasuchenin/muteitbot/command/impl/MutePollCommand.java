@@ -33,7 +33,7 @@ public class MutePollCommand implements BotCommand {
             messageServiceApi.sendMsg("Анус себе забань", chatId);
             return;
         }
-        if (config.getAdminName().contains(muteUserName)) {
+        if (config.getAdminName().equals(muteUserName)) {
             messageServiceApi.sendMsg("Его сила больше моей(", chatId);
             return;
         }
