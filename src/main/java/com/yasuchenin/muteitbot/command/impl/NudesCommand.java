@@ -16,6 +16,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class NudesCommand implements BotCommand {
 
+    private static final String PIC_SIZE = "regular";
+
     @Qualifier("unsplashWebClient")
     private final WebClient webClient;
     private final MessageServiceApi messageServiceApi;
@@ -33,8 +35,8 @@ public class NudesCommand implements BotCommand {
             .bodyToMono(UnsplashResponse.class);
 
         monoResponse.subscribe(response -> {
-            if (response != null && response.getUrls() != null && response.getUrls().get("small") != null) {
-                messageServiceApi.sendMsg(response.getUrls().get("small"), update.getMessage().getChatId());
+            if (response != null && response.getUrls() != null && response.getUrls().get(PIC_SIZE) != null) {
+                messageServiceApi.sendMsg(response.getUrls().get(PIC_SIZE), update.getMessage().getChatId());
             }
         });
 

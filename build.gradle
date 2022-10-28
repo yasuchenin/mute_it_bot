@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.yasuchenin'
-version = '0.0.4-SNAPSHOT'
+version = '0.0.5'
 sourceCompatibility = '17'
 
 configurations {

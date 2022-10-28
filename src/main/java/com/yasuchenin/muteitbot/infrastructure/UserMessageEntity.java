@@ -28,6 +28,8 @@ public class UserMessageEntity {
 
     private String userName;
 
+    private Long userId;
+
     @Column(name = "message_id")
     private Integer messageId;
 

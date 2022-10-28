@@ -1,4 +1,4 @@
-CREATE SEQUENCE hibernate_sequence START 1;
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1;
 
 CREATE TABLE IF NOT EXISTS user_messages
 (

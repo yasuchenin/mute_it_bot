@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -22,9 +23,10 @@ public class ClearMessageApiImpl implements ClearMessageService {
 
     @Override
     @Transactional
-    public void saveUserMessageInfo(String userName, Integer messageId, Long chatId) {
+    public void saveUserMessageInfo(String userName, Integer messageId, Long chatId, Long userId) {
         final UserMessageEntity messageEntity = UserMessageEntity.builder()
             .userName(userName)
+            .userId(userId)
             .messageId(messageId)
             .chatId(chatId)
             .build();
@@ -32,7 +34,7 @@ public class ClearMessageApiImpl implements ClearMessageService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public int removeUserMessages(String userName, Long chatId) {
         final List<Integer> userMessages = userMessagesRepo.findByUserNameAndChatId(userName, chatId)
             .stream()
@@ -40,7 +42,7 @@ public class ClearMessageApiImpl implements ClearMessageService {
             .toList();
 
         userMessages.forEach(messageId -> removeUserMessage(chatId, messageId));
-        userMessagesRepo.deleteByUserName(userName);
+        userMessagesRepo.deleteByUserNameAndChatId(userName, chatId);
 
         return userMessages.size();
     }

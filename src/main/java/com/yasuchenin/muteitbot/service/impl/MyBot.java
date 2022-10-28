@@ -40,9 +40,10 @@ public class MyBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             final String userName = update.getMessage().getFrom().getUserName();
+            final Long userId = update.getMessage().getFrom().getId();
             final Integer messageId = update.getMessage().getMessageId();
             final Long chatId = update.getMessage().getChatId();
-            clearMessageApi.saveUserMessageInfo("@" + userName, messageId, chatId);
+            clearMessageApi.saveUserMessageInfo("@" + userName, messageId, chatId, userId);
 
             if (update.getMessage().hasText()
                 && update.getMessage().getText().startsWith(config.getBotUserName())) {
