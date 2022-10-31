@@ -1,6 +1,8 @@
 package com.yasuchenin.muteitbot.configuration;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Random;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -31,6 +33,14 @@ public class BotApiConfiguration {
     }
 
     @Bean
+    public WebClient yandexWebClient(HttpClient httpClient) {
+        return WebClient.builder()
+            .baseUrl("https://yandex.ru/lab/api/yalm/text3")
+            .clientConnector(new ReactorClientHttpConnector(httpClient))
+            .build();
+    }
+
+    @Bean
     public WebClient rzhunemoguWebClient(HttpClient httpClient, BotConfigurationProperties config) {
         return WebClient.builder()
             .baseUrl("http://rzhunemogu.ru")
@@ -49,7 +59,12 @@ public class BotApiConfiguration {
     @Bean
     public HttpClient getHttpClient() {
         return HttpClient.create()
-            .responseTimeout(Duration.ofSeconds(5));
+            .responseTimeout(Duration.ofSeconds(15));
+    }
+
+    @Bean
+    public Random getRandom() {
+        return new Random(LocalDateTime.now().getNano());
     }
 
 }

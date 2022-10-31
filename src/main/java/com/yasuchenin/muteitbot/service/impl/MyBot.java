@@ -45,6 +45,16 @@ public class MyBot extends TelegramLongPollingBot {
             final Long chatId = update.getMessage().getChatId();
             clearMessageApi.saveUserMessageInfo("@" + userName, messageId, chatId, userId);
 
+            if (update.getMessage().hasText() && "а".equalsIgnoreCase(update.getMessage().getText())) {
+                messageServiceApi.sendMsg("хуй на", update.getMessage().getChatId());
+                return;
+            }
+
+            if (update.getMessage().hasText() && "да".equalsIgnoreCase(update.getMessage().getText())) {
+                messageServiceApi.sendMsg("манда", update.getMessage().getChatId());
+                return;
+            }
+
             if (update.getMessage().hasText()
                 && update.getMessage().getText().startsWith(config.getBotUserName())) {
                 final List<String> messageCommands = getCommandList(update.getMessage().getText());
